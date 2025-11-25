@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 import cookieParser from "cookie-parser"
 import morgan from "morgan"
 import helmet from "helmet"
-import run from "./config/db.js"
+import connectDB from "./config/db.js"
 
 const app = express()
 dotenv.config()
@@ -29,5 +29,5 @@ const PORT = process.env.PORT;
 
 app.listen(PORT, ()=>{
   console.log("Server is running port Number", PORT)
-  run()
+ connectDB()
 })
