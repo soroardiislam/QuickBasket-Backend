@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser"
 import morgan from "morgan"
 import helmet from "helmet"
 import connectDB from "./config/db.js"
+import userRouter from "./routes/user.route.js"
 
 const app = express()
 dotenv.config()
@@ -23,7 +24,7 @@ app.use(
   })
 );
 
-
+app.use('/api/user', userRouter)
 
 const PORT = process.env.PORT;
 

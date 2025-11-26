@@ -1,5 +1,7 @@
-import UserModel from "../models/user.model";
+import sendEmail from "../config/sendEmail.js";
+import UserModel from "../models/user.model.js";
 import bcrypt from "bcryptjs";
+import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
 
 
 const UserRegister = async (req, res)=>{
@@ -33,8 +35,24 @@ const UserRegister = async (req, res)=>{
       password: hashPassword
     }
     const newUser = new UserModel(payload);
-    const save = await newUser.save()
+    const save = await newUser.save();
 
+    const verifyEmailUrl = `${process.env.FRONTEND_URI}/ verify-email?code=${save?._id}`;
+
+    const verifyEmail = await sendEmail({
+           sendTo: email,
+           subject: "verify email from Binkeyit",
+           html :verifyEmailTemplate({
+            name,
+            url: verifyEmailUrl,
+           }),
+    })
+
+    return res.json({
+      message: " User register successfully",
+      success: true,
+      data:save,
+    })
 
   } catch (error) {
     return res.status(500).json({
@@ -44,4 +62,8 @@ const UserRegister = async (req, res)=>{
     })
     
   }
+}
+
+export{
+  UserRegister
 }
