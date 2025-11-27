@@ -26,6 +26,10 @@ app.use(
 
 app.use('/api/user', userRouter)
 
+app.get("/", async (req, res)=>{
+   res.send("Serve is running")
+})
+
 const PORT = process.env.PORT;
 
 app.listen(PORT, ()=>{
