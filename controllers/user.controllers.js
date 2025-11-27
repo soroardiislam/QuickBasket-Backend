@@ -164,10 +164,38 @@ const userLogin = async (req, res)=>{
     }
 }
 
+const userLogout = async (req, res)=>{
+      try {
+        const cookiesOption ={
+            httpOnly : true,
+            secure: true, 
+            sameSite: "None"
+        };
+
+        res.clearCookie("accessToken", cookiesOption);
+        res.clearCookie("refreshToken", cookiesOption);
+
+        res.json({
+            message:"user Logout successfully",
+            success:true
+
+        })
+
+        
+      } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            success: false
+        })
+        
+      }
+}
+
 
 
 export{
     UserRegister,
     verifyEmailController,
-    userLogin
+    userLogin,
+    userLogout
 }
