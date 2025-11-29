@@ -166,6 +166,8 @@ const userLogin = async (req, res)=>{
 
 const userLogout = async (req, res)=>{
       try {
+
+        const userId = req.userId;
         const cookiesOption ={
             httpOnly : true,
             secure: true, 
@@ -174,6 +176,8 @@ const userLogout = async (req, res)=>{
 
         res.clearCookie("accessToken", cookiesOption);
         res.clearCookie("refreshToken", cookiesOption);
+
+        const removeRefreshToken = await UserModel.findByIdAndUpdate(userId, {refresh_token: ""})
 
         res.json({
             message:"user Logout successfully",
