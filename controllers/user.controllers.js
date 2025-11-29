@@ -5,6 +5,7 @@ import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
 import generatedAccessToken from "../utils/generatedAccessToken.js";
 import generatedRefreshToken from "../utils/generatedRefreshToken.js";
 import sendEmail from "../config/sendEmail.js";
+import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
 
 
 
@@ -195,11 +196,36 @@ const userLogout = async (req, res)=>{
       }
 }
 
+const uploadAvatar = async(req,res)=>{
+    try {
+        const userId = req.userId;
+        const image = req.file;
+        const upload = await uploadImageCloudinary(image);
+ 
+        const updateUser = await UserModel.findByIdAndUpdate(userId,{ avatar: upload.url})
 
+        return res.status(200).json({
+            message: "upload profile successfully",
+            success: true,
+            data: {
+                _id:userId,
+                avatar:upload.url
+            }
+
+        })
+        
+    } catch (error) {
+        res.status(500).json({
+            message:error.message || error,
+            error: true
+        })
+    }
+}
 
 export{
     UserRegister,
     verifyEmailController,
     userLogin,
-    userLogout
+    userLogout,
+    uploadAvatar
 }
