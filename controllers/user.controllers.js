@@ -224,7 +224,7 @@ const uploadAvatar = async(req,res)=>{
 
 const updateUserDetails = async(req, res)=>{
     try {
-        const userId = req.userId //auth middleware
+        const userId = req.userId 
         const { name, email, mobile, password } = req.body 
 
         let hashPassword = ""
