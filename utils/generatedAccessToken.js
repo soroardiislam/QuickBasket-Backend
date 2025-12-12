@@ -1,7 +1,7 @@
 import jwt from"jsonwebtoken"
 
-const generatedAccessToken = async (userId)=>{
-  const token = await jwt.sign({id:userId}, process.env.SECRET_KEY_ACCESS_TOKEN, {expiresIn: `5h`})
+const generatedAccessToken = async (userId, role)=>{
+  const token = await jwt.sign({id:userId, role}, process.env.SECRET_KEY_ACCESS_TOKEN, {expiresIn: `5h`})
 
   return token 
 }

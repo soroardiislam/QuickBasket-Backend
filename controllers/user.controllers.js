@@ -11,9 +11,9 @@ import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
 
 const UserRegister = async (req, res)=>{
     try {
-        const {name , email, password} = req.body;
+        const {name , email, password, role} = req.body;
 
-        if(!name || !email || !password){
+        if(!name || !email || !password || !role){
             return res.status(400).json({
                 message: "Please provide email, name, and password",
                 error : true,
@@ -106,7 +106,7 @@ const verifyEmailController = async (req,res)=>{
 
 const userLogin = async (req, res)=>{
     try {
-        const {email, password}= req.body;
+        const {email, password, role}= req.body;
 
         const user = await UserModel.findOne({ email });
 
@@ -135,8 +135,8 @@ const userLogin = async (req, res)=>{
             })
         }
 
-        const accesstoken = await generatedAccessToken(user._id);
-        const refreshtoken = await generatedRefreshToken(user._id);
+        const accesstoken = await generatedAccessToken(user._id,role);
+        const refreshtoken = await generatedRefreshToken(user._id,role);
 
         const cookiesOption ={
             httpOnly : true,
