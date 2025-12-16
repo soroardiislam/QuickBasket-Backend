@@ -248,115 +248,109 @@ const updateUserDetails = async (req, res) => {
   }
 };
 
-const forgotPasswordController= async (req,res)=> {
-    try {
-        const { email } = req.body 
+const forgotPasswordController = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-        const user = await UserModel.findOne({ email })
+    const user = await UserModel.findOne({ email });
 
-        if(!user){
-            return res.status(400).json({
-                message : "Email not available",
-                error : true,
-                success : false
-            })
-        }
-
-        const otp = generatedOtp()
-        const expireTime = new Date() + 60 * 60 * 1000 
-
-        const update = await UserModel.findByIdAndUpdate(user._id,{
-            forgot_password_otp : otp,
-            forgot_password_expiry : new Date(expireTime).toISOString()
-        })
-
-        await sendEmail({
-            sendTo : email,
-            subject : "Forgot password from Binkeyit",
-            html : forgotPasswordTemplate({
-                name : user.name,
-                otp : otp
-            })
-        })
-
-        return res.json({
-            message : "check your email",
-            error : false,
-            success : true
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+    if (!user) {
+      return res.status(400).json({
+        message: "Email not available",
+        error: true,
+        success: false,
+      });
     }
-}
 
+    const otp = generatedOtp();
+    const expireTime = new Date() + 60 * 60 * 1000;
 
-const verifyForgotPasswordOtp = async(req,res)=>{
-    try {
-        const { email , otp }  = req.body
+    const update = await UserModel.findByIdAndUpdate(user._id, {
+      forgot_password_otp: otp,
+      forgot_password_expiry: new Date(expireTime).toISOString(),
+    });
 
-        if(!email || !otp){
-            return res.status(400).json({
-                message : "Provide required field email, otp.",
-                error : true,
-                success : false
-            })
-        }
+    await sendEmail({
+      sendTo: email,
+      subject: "Forgot password from Binkeyit",
+      html: forgotPasswordTemplate({
+        name: user.name,
+        otp: otp,
+      }),
+    });
 
-        const user = await UserModel.findOne({ email })
+    return res.json({
+      message: "check your email",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
 
-        if(!user){
-            return res.status(400).json({
-                message : "Email not available",
-                error : true,
-                success : false
-            })
-        }
+const verifyForgotPasswordOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
 
-        const currentTime = new Date().toISOString()
-
-        if(user.forgot_password_expiry < currentTime  ){
-            return res.status(400).json({
-                message : "Otp is expired",
-                error : true,
-                success : false
-            })
-        }
-
-        if(otp !== user.forgot_password_otp){
-            return res.status(400).json({
-                message : "Invalid otp",
-                error : true,
-                success : false
-            })
-        }
-
-       
-
-        const updateUser = await UserModel.findByIdAndUpdate(user?._id,{
-            forgot_password_otp : "",
-            forgot_password_expiry : ""
-        })
-        
-        return res.json({
-            message : "Verify otp successfully",
-            error : false,
-            success : true
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+    if (!email || !otp) {
+      return res.status(400).json({
+        message: "Provide required field email, otp.",
+        error: true,
+        success: false,
+      });
     }
-}
 
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Email not available",
+        error: true,
+        success: false,
+      });
+    }
+
+    const currentTime = new Date().toISOString();
+
+    if (user.forgot_password_expiry < currentTime) {
+      return res.status(400).json({
+        message: "Otp is expired",
+        error: true,
+        success: false,
+      });
+    }
+
+    if (otp !== user.forgot_password_otp) {
+      return res.status(400).json({
+        message: "Invalid otp",
+        error: true,
+        success: false,
+      });
+    }
+
+    const updateUser = await UserModel.findByIdAndUpdate(user?._id, {
+      forgot_password_otp: "",
+      forgot_password_expiry: "",
+    });
+
+    return res.json({
+      message: "Verify otp successfully",
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
 
 export {
   UserRegister,

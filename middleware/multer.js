@@ -1,7 +1,7 @@
-import multer from "multer"
+import multer from "multer";
 
 const storege = multer.memoryStorage();
 
-const upload = multer({storege: storege})
+const upload = multer({ storege: storege });
 
 export default upload;
