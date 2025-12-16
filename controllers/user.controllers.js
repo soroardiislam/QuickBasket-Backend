@@ -263,7 +263,7 @@ const forgotPasswordController= async (req,res)=> {
         }
 
         const otp = generatedOtp()
-        const expireTime = new Date() + 60 * 60 * 1000 // 1hr
+        const expireTime = new Date() + 60 * 60 * 1000 
 
         const update = await UserModel.findByIdAndUpdate(user._id,{
             forgot_password_otp : otp,
@@ -295,6 +295,67 @@ const forgotPasswordController= async (req,res)=> {
 }
 
 
+const verifyForgotPasswordOtp = async(req,res)=>{
+    try {
+        const { email , otp }  = req.body
+
+        if(!email || !otp){
+            return res.status(400).json({
+                message : "Provide required field email, otp.",
+                error : true,
+                success : false
+            })
+        }
+
+        const user = await UserModel.findOne({ email })
+
+        if(!user){
+            return res.status(400).json({
+                message : "Email not available",
+                error : true,
+                success : false
+            })
+        }
+
+        const currentTime = new Date().toISOString()
+
+        if(user.forgot_password_expiry < currentTime  ){
+            return res.status(400).json({
+                message : "Otp is expired",
+                error : true,
+                success : false
+            })
+        }
+
+        if(otp !== user.forgot_password_otp){
+            return res.status(400).json({
+                message : "Invalid otp",
+                error : true,
+                success : false
+            })
+        }
+
+       
+
+        const updateUser = await UserModel.findByIdAndUpdate(user?._id,{
+            forgot_password_otp : "",
+            forgot_password_expiry : ""
+        })
+        
+        return res.json({
+            message : "Verify otp successfully",
+            error : false,
+            success : true
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message : error.message || error,
+            error : true,
+            success : false
+        })
+    }
+}
 
 
 export {
