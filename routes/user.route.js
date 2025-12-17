@@ -23,6 +23,6 @@ userRouter.put("/upload-avatar", auth, upload.single("avatar"), uploadAvatar);
 userRouter.put("/update-user", auth, updateUserDetails);
 userRouter.put("/forgot-password", forgotPasswordController);
 userRouter.put("/verify-forgot-password-otp", verifyForgotPasswordOtp);
-userRouter.put('/reset-password',resetpassword);
+userRouter.put("/reset-password", resetpassword);
 
 export default userRouter;
