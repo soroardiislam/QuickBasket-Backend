@@ -401,6 +401,31 @@ const resetpassword = async (req, res) => {
   }
 };
 
+const userDetails = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    console.log(userId);
+
+    const user = await UserModel.findById(userId).select(
+      "-password -refresh_token"
+    );
+
+    return res.json({
+      message: "user details",
+      data: user,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Something is wrong",
+      error: true,
+      success: false,
+    });
+  }
+};
+
 export {
   UserRegister,
   verifyEmailController,
@@ -411,4 +436,5 @@ export {
   forgotPasswordController,
   verifyForgotPasswordOtp,
   resetpassword,
+  userDetails,
 };
